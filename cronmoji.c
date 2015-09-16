@@ -1,9 +1,16 @@
+#include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
-#define TICK_SIZE_MINS 15
+#define TICK_SIZE_MINS 30 // matched to clock emoji
 
-void time_str_clamped(char *str)
+typedef struct time_pair {
+    int h;
+    int m;
+} TimePair;
+
+TimePair *time_pair_alloc()
 {
     time_t raw_time;
     struct tm *t;
@@ -11,18 +18,53 @@ void time_str_clamped(char *str)
     time(&raw_time);
     t = localtime(&raw_time);
 
-    int h = (t->tm_hour > 12) ? t->tm_hour - 12 : t->tm_hour;
-    int m = t->tm_min - (t->tm_min % TICK_SIZE_MINS); // last tick
+    TimePair *tp = malloc(sizeof(TimePair));
+    assert(tp != NULL);
 
-    snprintf(str, 6, "%d:%02d", h, m); // "HH:MM\0"
+    // range is 1-12 (midnight is 12)
+    tp->h = (t->tm_hour == 0) ? 12 :
+        ((t->tm_hour > 12) ? t->tm_hour - 12 : t->tm_hour);
+
+    // clamped to last tick
+    tp->m = t->tm_min - (t->tm_min % TICK_SIZE_MINS);
+
+    return tp;
+}
+
+void time_print_digits(TimePair *tp) // FIXME: testing
+{
+    assert(tp != NULL);
+
+    assert(tp->h >= 1 && tp->h <= 12);
+    assert(tp->m >= 0 && tp->m <= 59);
+
+    printf("%d:%02d\n", tp->h, tp->m); // i.e., "HH:MM\0"
+}
+
+void time_print_emoji(TimePair *tp) // FIXME: testing
+{
+    assert(tp != NULL);
+
+    assert(tp->h >= 1 && tp->h <= 12);
+    assert(tp->m >= 0 && tp->m <= 59);
+    assert(tp->m % TICK_SIZE_MINS == 0);
+
+    if (tp->m == 0) {
+        printf(":clock%d:\n", tp->h); // e.g., ":clock8:"
+    }
+    else {
+        printf(":clock%d%d:\n", tp->h, tp->m); // e.g., ":clock330:"
+    }
 }
 
 int main(int argc, char *argv[])
 {
-    char time_str[6]; // "HH:MM\0"
-    time_str_clamped(time_str);
+    TimePair *tp = time_pair_alloc();
 
-    printf("%s\n", time_str);
+    time_print_digits(tp);
+    time_print_emoji(tp);
+
+    free(tp);
 
     return 0;
 }
