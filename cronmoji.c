@@ -10,16 +10,16 @@ typedef struct time_pair {
     int m;
 } TimePair;
 
-TimePair *time_pair_alloc()
+TimePair *time_pair_make()
 {
-    time_t raw_time;
-    struct tm *t;
-
-    time(&raw_time);
-    t = localtime(&raw_time);
-
     TimePair *tp = malloc(sizeof(TimePair));
     assert(tp != NULL);
+
+    time_t time_raw;
+    struct tm *t;
+
+    time(&time_raw);
+    t = localtime(&time_raw);
 
     // range is 1-12 (midnight is 12)
     tp->h = (t->tm_hour == 0) ? 12 :
@@ -38,7 +38,7 @@ void time_print_digits(TimePair *tp) // FIXME: testing
     assert(tp->h >= 1 && tp->h <= 12);
     assert(tp->m >= 0 && tp->m <= 59);
 
-    printf("%d:%02d\n", tp->h, tp->m); // i.e., "HH:MM\0"
+    printf("%d:%02d\n", tp->h, tp->m); // i.e., "HH:MM"
 }
 
 void time_print_emoji(TimePair *tp) // FIXME: testing
@@ -59,7 +59,7 @@ void time_print_emoji(TimePair *tp) // FIXME: testing
 
 int main(int argc, char *argv[])
 {
-    TimePair *tp = time_pair_alloc();
+    TimePair *tp = time_pair_make();
 
     time_print_digits(tp);
     time_print_emoji(tp);
