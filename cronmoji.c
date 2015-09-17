@@ -3,23 +3,33 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define TICK_SIZE_MINS 30 // matched to clock emoji
+#include "pcg_basic.h" // http://www.pcg-random.org/
+
+#define TICK_SIZE_MINS 30 // matches clock emoji
+
+const char *ZULIP_MSG[] = {
+    "Hey @**all**, it's [time] [clock] check-in time! [emoji]",
+    "[clock] Yay, @**all**, it's time for [time] check-ins! [emoji]",
+    "@**all** Woo woo, it's time [clock] for [time] check-ins! [emoji]",
+    "[time] [clock] check-ins are now, @**all**! Have fun! [emoji]"
+};
+
+const char ZULIP_MSG_SIZE = 4;
 
 typedef struct time_pair {
     int h;
     int m;
 } TimePair;
 
+/* time */
+
 TimePair *time_pair_make()
 {
     TimePair *tp = malloc(sizeof(TimePair));
     assert(tp != NULL);
 
-    time_t time_raw;
-    struct tm *t;
-
-    time(&time_raw);
-    t = localtime(&time_raw);
+    time_t time_raw = time(NULL);
+    struct tm *t = localtime(&time_raw);
 
     // range is 1-12 (midnight is 12)
     tp->h = (t->tm_hour == 0) ? 12 :
@@ -38,7 +48,7 @@ void time_print_digits(TimePair *tp) // FIXME: testing
     assert(tp->h >= 1 && tp->h <= 12);
     assert(tp->m >= 0 && tp->m <= 59);
 
-    printf("%d:%02d\n", tp->h, tp->m); // i.e., "HH:MM"
+    printf("%d:%02d\n", tp->h, tp->m); // i.e., "[H]H:MM"
 }
 
 void time_print_emoji(TimePair *tp) // FIXME: testing
@@ -57,6 +67,8 @@ void time_print_emoji(TimePair *tp) // FIXME: testing
     }
 }
 
+/* main */
+
 int main(int argc, char *argv[])
 {
     TimePair *tp = time_pair_make();
@@ -65,6 +77,12 @@ int main(int argc, char *argv[])
     time_print_emoji(tp);
 
     free(tp);
+
+    pcg32_random_t rng;
+    int rounds = 5; // TODO: const
+    pcg32_srandom_r(&rng, time(NULL) ^ (intptr_t)&printf, (intptr_t)&rounds);
+    int r = (int)pcg32_boundedrand_r(&rng, ZULIP_MSG_SIZE);
+    printf("%d => %s\n", r, ZULIP_MSG[r]);
 
     return 0;
 }

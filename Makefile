@@ -2,11 +2,12 @@ NAME=cronmoji
 
 CC=clang
 CFLAGS=-Wall -g
+INCLUDES=pcg_basic
 
 all: clean cronmoji
 
-exifcool:
-	$(CC) -o $(NAME) src/$(NAME).c
+cronmoji:
+	$(CC) -o $(NAME) $(NAME).c $(INCLUDES).c
 
 .PHONY: clean
 clean:
