@@ -3,7 +3,7 @@ NAME = cronmoji
 CC = clang
 CFLAGS = -Wall -g
 
-SRCS = $(wildcard *.c)
+SRCS = $(wildcard src/*.c)
 
 all: clean cronmoji
 
