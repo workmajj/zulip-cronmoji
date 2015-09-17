@@ -3,17 +3,17 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "const.h"
 #include "pcg_basic.h" // http://www.pcg-random.org/
+#include "zconst.h"
 
 #define TICK_SIZE_MINS 30 // matches clock emoji
+
+/* time */
 
 typedef struct time_pair {
     int h;
     int m;
 } TimePair;
-
-/* time */
 
 TimePair *time_pair_make()
 {
