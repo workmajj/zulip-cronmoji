@@ -1,13 +1,14 @@
-NAME=cronmoji
+NAME = cronmoji
 
-CC=clang
-CFLAGS=-Wall -g
-INCLUDES=pcg_basic
+CC = clang
+CFLAGS = -Wall -g
+
+SRCS = $(wildcard *.c)
 
 all: clean cronmoji
 
 cronmoji:
-	$(CC) -o $(NAME) $(NAME).c $(INCLUDES).c
+	$(CC) -o $(NAME) $(SRCS)
 
 .PHONY: clean
 clean:

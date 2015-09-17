@@ -67,6 +67,18 @@ void time_print_emoji(TimePair *tp) // FIXME: testing
     }
 }
 
+/* rand */
+
+int rand_gen(int bound)
+{
+    const int rounds = 5;
+
+    pcg32_random_t rng;
+    pcg32_srandom_r(&rng, time(NULL) ^ (intptr_t)&printf, (intptr_t)&rounds);
+
+    return (int)pcg32_boundedrand_r(&rng, bound); // 0 <= x < bound
+}
+
 /* main */
 
 int main(int argc, char *argv[])
@@ -78,10 +90,8 @@ int main(int argc, char *argv[])
 
     free(tp);
 
-    pcg32_random_t rng;
-    int rounds = 5; // TODO: const
-    pcg32_srandom_r(&rng, time(NULL) ^ (intptr_t)&printf, (intptr_t)&rounds);
-    int r = (int)pcg32_boundedrand_r(&rng, ZULIP_MSG_SIZE);
+    int r = rand_gen(ZULIP_MSG_SIZE);
+
     printf("%d => %s\n", r, ZULIP_MSG[r]);
 
     return 0;
