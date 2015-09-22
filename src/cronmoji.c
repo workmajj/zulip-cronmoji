@@ -3,10 +3,9 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "pcg_basic.h" // http://www.pcg-random.org/
 #include "zconst.h"
 
-#define TICK_SIZE_MINS 30 // matches clock emoji
+#define MINS_PER_TICK 30 // matches clock emoji
 
 /* time */
 
@@ -28,12 +27,12 @@ TimePair *time_pair_make()
         ((t->tm_hour > 12) ? t->tm_hour - 12 : t->tm_hour);
 
     // clamped to last tick
-    tp->m = t->tm_min - (t->tm_min % TICK_SIZE_MINS);
+    tp->m = t->tm_min - (t->tm_min % MINS_PER_TICK);
 
     return tp;
 }
 
-void time_print_digits(TimePair *tp) // FIXME: testing
+void time_print_digits(TimePair *tp)
 {
     assert(tp != NULL);
 
@@ -43,13 +42,13 @@ void time_print_digits(TimePair *tp) // FIXME: testing
     printf("%d:%02d\n", tp->h, tp->m); // i.e., "[H]H:MM"
 }
 
-void time_print_emoji(TimePair *tp) // FIXME: testing
+void time_print_emoji(TimePair *tp)
 {
     assert(tp != NULL);
 
     assert(tp->h >= 1 && tp->h <= 12);
     assert(tp->m >= 0 && tp->m <= 59);
-    assert(tp->m % TICK_SIZE_MINS == 0);
+    assert(tp->m % MINS_PER_TICK == 0);
 
     if (tp->m == 0) {
         printf(":clock%d:\n", tp->h); // e.g., ":clock8:"
@@ -57,18 +56,6 @@ void time_print_emoji(TimePair *tp) // FIXME: testing
     else {
         printf(":clock%d%d:\n", tp->h, tp->m); // e.g., ":clock330:"
     }
-}
-
-/* rand */
-
-int rand_gen(int bound)
-{
-    const int rounds = 5;
-
-    pcg32_random_t rng;
-    pcg32_srandom_r(&rng, time(NULL) ^ (intptr_t)&printf, (intptr_t)&rounds);
-
-    return (int)pcg32_boundedrand_r(&rng, bound); // 0 <= x < bound
 }
 
 /* main */
@@ -82,9 +69,10 @@ int main(int argc, char *argv[])
 
     free(tp);
 
-    int r = rand_gen(ZULIP_MSG_SIZE);
+    srandom(time(NULL));
+    int r = random() % ZULIP_TPL_SIZE;
 
-    printf("%d => %s\n", r, ZULIP_MSG[r]);
+    printf("%d => %s\n", r, ZULIP_TPL[r]);
 
     return 0;
 }

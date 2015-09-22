@@ -1,12 +1,12 @@
-/* msg */
+/* tpl */
 
 // "@**all**" => broadcast to channel
-// [time] => time string (e.g., "10:30")
-// [clock] => emoji corresponding to current time
-// [emoji] => assorted emoji selected from below
+// "[time]" => time as string (e.g., "10:30")
+// "[clock]" => emoji corresponding to current time
+// "[emoji]" => randomly selected emoji from below
 
-const size_t ZULIP_MSG_SIZE = 4;
-const char *ZULIP_MSG[] = {
+const size_t ZULIP_TPL_SIZE = 4;
+const char *ZULIP_TPL[] = {
     "Hey @**all**, it's [time] [clock] check-in time! [emoji]",
     "[clock] Yay, @**all**, it's time for [time] check-ins! [emoji]",
     "@**all** Woo woo, it's time [clock] for [time] check-ins! [emoji]",
