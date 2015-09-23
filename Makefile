@@ -8,7 +8,7 @@ SRCS = $(wildcard src/*.c)
 all: clean cronmoji
 
 cronmoji:
-	$(CC) -o $(NAME) $(SRCS)
+	$(CC) -lcurl -o $(NAME) $(SRCS)
 
 .PHONY: clean
 clean:
