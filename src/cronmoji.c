@@ -25,9 +25,8 @@ typedef struct time_pair {
     int m;
 } TimePair;
 
-TimePair *time_pair_make()
+void time_pair_init(TimePair *tp)
 {
-    TimePair *tp = malloc(sizeof(TimePair));
     assert(tp != NULL);
 
     time_t time_raw = time(NULL);
@@ -39,8 +38,6 @@ TimePair *time_pair_make()
 
     // clamped to last tick
     tp->m = t->tm_min - (t->tm_min % MINS_PER_TICK);
-
-    return tp;
 }
 
 void time_print_digits(TimePair *tp)
@@ -59,7 +56,7 @@ void time_print_emoji(TimePair *tp)
 
     assert(tp->h >= 1 && tp->h <= 12);
     assert(tp->m >= 0 && tp->m <= 59);
-    assert(tp->m % MINS_PER_TICK == 0); // clamped
+    assert(tp->m % MINS_PER_TICK == 0);
 
     if (tp->m == 0) {
         printf(":clock%d:\n", tp->h); // e.g., ":clock8:"
@@ -105,6 +102,9 @@ void req_build_post(char *buf, const size_t size,
 
 void req_send(char *buf_auth, char *buf_post)
 {
+    assert(buf_auth != NULL);
+    assert(buf_post != NULL);
+
     CURL *ch = curl_easy_init();
     if (!ch) {
         curl_global_cleanup();
@@ -156,17 +156,10 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    /*
-    printf("e-mail address => %s\n", env_email);
-    printf("api key => %s\n", env_key);
-
-    TimePair *tp = time_pair_make();
-
-    time_print_digits(tp);
-    time_print_emoji(tp);
-
-    free(tp);
-    */
+    TimePair tp;
+    time_pair_init(&tp);
+    time_print_digits(&tp);
+    time_print_emoji(&tp);
 
     srandom(time(NULL));
 
@@ -178,7 +171,10 @@ int main(int argc, char *argv[])
     req_build_auth(buf_auth, sizeof(buf_auth), api_email, api_key);
     req_build_post(buf_post, sizeof(buf_post), argv[1], argv[2], ZULIP_TPL[r]);
 
-    req_send(buf_auth, buf_post);
+    // req_send(buf_auth, buf_post);
+
+    printf("buf_auth: %s\n", buf_auth);
+    printf("buf_post: %s\n", buf_post);
 
     return 0;
 }
