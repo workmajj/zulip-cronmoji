@@ -5,6 +5,9 @@
 
 #include "zconst.h"
 
+#define ENV_EMAIL "CRONMOJI_EMAIL"
+#define ENV_KEY "CRONMOJI_KEY"
+
 #define MINS_PER_TICK 30 // matches clock emoji
 
 /* time */
@@ -48,7 +51,7 @@ void time_print_emoji(TimePair *tp)
 
     assert(tp->h >= 1 && tp->h <= 12);
     assert(tp->m >= 0 && tp->m <= 59);
-    assert(tp->m % MINS_PER_TICK == 0);
+    assert(tp->m % MINS_PER_TICK == 0); // clamped
 
     if (tp->m == 0) {
         printf(":clock%d:\n", tp->h); // e.g., ":clock8:"
@@ -62,6 +65,25 @@ void time_print_emoji(TimePair *tp)
 
 int main(int argc, char *argv[])
 {
+    if (argc != 2) {
+        fprintf(stderr, "usage: %s <stream_name>\n", argv[0]);
+        exit(1);
+    }
+
+    char *env_email = getenv(ENV_EMAIL);
+    if (!env_email) {
+        fprintf(stderr, "couldn't get e-mail address from %s\n", ENV_EMAIL);
+        exit(1);
+    }
+    char *env_key = getenv(ENV_KEY);
+    if (!env_key) {
+        fprintf(stderr, "couldn't get api key from %s\n", ENV_KEY);
+        exit(1);
+    }
+
+    printf("e-mail address => %s\n", env_email);
+    printf("api key => %s\n", env_key);
+
     TimePair *tp = time_pair_make();
 
     time_print_digits(tp);
@@ -70,8 +92,8 @@ int main(int argc, char *argv[])
     free(tp);
 
     srandom(time(NULL));
-    int r = random() % ZULIP_TPL_SIZE;
 
+    int r = random() % ZULIP_TPL_SIZE;
     printf("%d => %s\n", r, ZULIP_TPL[r]);
 
     return 0;
