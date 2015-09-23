@@ -8,15 +8,15 @@
 
 #include "zconst.h"
 
+#define API_POST_URL "https://api.zulip.com/v1/messages"
+
+#define BUF_SIZE_AUTH 128
+#define BUF_SIZE_POST 512
+
 #define ENV_VAR_EMAIL "CRONMOJI_EMAIL"
 #define ENV_VAR_KEY "CRONMOJI_KEY"
 
 #define MINS_PER_TICK 30 // matches clock emoji
-
-#define POST_URL "https://api.zulip.com/v1/messages"
-
-char *global_api_email;
-char *global_api_key;
 
 /* time */
 
@@ -69,23 +69,42 @@ void time_print_emoji(TimePair *tp)
     }
 }
 
-/* curl */
+/* req */
 
-void curl_send(const char *stream, const char *subject, const char *content)
+void req_build_auth(char *buf, const size_t size,
+    const char *email, const char *key)
 {
-    char buf_auth[128] = {0};
-    strlcpy(buf_auth, global_api_email, sizeof(buf_auth));
-    strlcat(buf_auth, ":", sizeof(buf_auth));
-    strlcat(buf_auth, global_api_key, sizeof(buf_auth));
+    assert(buf != NULL);
+    assert(email != NULL);
+    assert(key != NULL);
 
-    char buf_post[256] = {0};
-    strlcpy(buf_post, "type=stream&to=", sizeof(buf_post));
-    strlcat(buf_post, stream, sizeof(buf_post));
-    strlcat(buf_post, "&subject=", sizeof(buf_post));
-    strlcat(buf_post, subject, sizeof(buf_post));
-    strlcat(buf_post, "&content=", sizeof(buf_post));
-    strlcat(buf_post, content, sizeof(buf_post));
+    memset(buf, 0, size);
 
+    strlcpy(buf, email, size);
+    strlcat(buf, ":", size);
+    strlcat(buf, key, size);
+}
+
+void req_build_post(char *buf, const size_t size,
+    const char *stream, const char *subject, const char *content)
+{
+    assert(buf != NULL);
+    assert(stream != NULL);
+    assert(subject != NULL);
+    assert(content != NULL);
+
+    memset(buf, 0, size);
+
+    strlcpy(buf, "type=stream&to=", size);
+    strlcat(buf, stream, size);
+    strlcat(buf, "&subject=", size);
+    strlcat(buf, subject, size);
+    strlcat(buf, "&content=", size);
+    strlcat(buf, content, size);
+}
+
+void req_send(char *buf_auth, char *buf_post)
+{
     CURL *curl = curl_easy_init();
     if (!curl) {
         curl_global_cleanup();
@@ -94,21 +113,16 @@ void curl_send(const char *stream, const char *subject, const char *content)
         exit(1);
     }
 
-    char *curl_auth = curl_easy_escape(curl, buf_auth, 0);
-    char *curl_post = curl_easy_escape(curl, buf_post, 0);
+    // TODO: curl_easy_escape?
 
-    curl_easy_setopt(curl, CURLOPT_URL, POST_URL);
+    curl_easy_setopt(curl, CURLOPT_URL, API_POST_URL);
     curl_easy_setopt(curl, CURLOPT_USERPWD, buf_auth);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, buf_post);
 
     CURLcode res = curl_easy_perform(curl);
     if (res != CURLE_OK) {
         fprintf(stderr, "curl failed with error %s\n", curl_easy_strerror(res));
-        exit(1);
     }
-
-    curl_free(curl_auth);
-    curl_free(curl_post);
 
     curl_easy_cleanup(curl);
     curl_global_cleanup();
@@ -123,14 +137,14 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    global_api_email = getenv(ENV_VAR_EMAIL);
-    if (!global_api_email) {
+    char *api_email = getenv(ENV_VAR_EMAIL);
+    if (!api_email) {
         fprintf(stderr, "couldn't get e-mail from %s\n", ENV_VAR_EMAIL);
         exit(1);
     }
 
-    global_api_key = getenv(ENV_VAR_KEY);
-    if (!global_api_key) {
+    char *api_key = getenv(ENV_VAR_KEY);
+    if (!api_key) {
         fprintf(stderr, "couldn't get api key from %s\n", ENV_VAR_KEY);
         exit(1);
     }
@@ -148,9 +162,15 @@ int main(int argc, char *argv[])
     */
 
     srandom(time(NULL));
+    int r = random() % ZULIP_TPL_SIZE;
 
-    int idx = random() % ZULIP_TPL_SIZE;
-    curl_send(argv[1], argv[2], ZULIP_TPL[idx]);
+    char buf_auth[BUF_SIZE_AUTH];
+    char buf_post[BUF_SIZE_POST];
+
+    req_build_auth(buf_auth, sizeof(buf_auth), api_email, api_key);
+    req_build_post(buf_post, sizeof(buf_post), argv[1], argv[2], ZULIP_TPL[r]);
+
+    req_send(buf_auth, buf_post);
 
     return 0;
 }
