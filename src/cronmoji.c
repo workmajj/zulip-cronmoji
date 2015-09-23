@@ -8,18 +8,15 @@
 
 #include "zconst.h"
 
-#define ENV_EMAIL "CRONMOJI_EMAIL"
-#define ENV_KEY "CRONMOJI_KEY"
+#define ENV_VAR_EMAIL "CRONMOJI_EMAIL"
+#define ENV_VAR_KEY "CRONMOJI_KEY"
 
 #define MINS_PER_TICK 30 // matches clock emoji
 
-#define STREAM_URL "https://api.zulip.com/v1/messages"
-#define STREAM_SUBJECT "check-ins"
+#define POST_URL "https://api.zulip.com/v1/messages"
 
-/* global */
-
-char *api_email;
-char *api_key;
+char *global_api_email;
+char *global_api_key;
 
 /* time */
 
@@ -74,18 +71,20 @@ void time_print_emoji(TimePair *tp)
 
 /* curl */
 
-void curl_send(const char *stream, const char *subject, const char *message)
+void curl_send(const char *stream, const char *subject, const char *content)
 {
     char buf_auth[128] = {0};
-    strlcpy(buf_auth, api_email, sizeof(buf_auth));
+    strlcpy(buf_auth, global_api_email, sizeof(buf_auth));
     strlcat(buf_auth, ":", sizeof(buf_auth));
-    strlcat(buf_auth, api_key, sizeof(buf_auth));
+    strlcat(buf_auth, global_api_key, sizeof(buf_auth));
 
     char buf_post[256] = {0};
     strlcpy(buf_post, "type=stream&to=", sizeof(buf_post));
     strlcat(buf_post, stream, sizeof(buf_post));
-    strlcat(buf_post, "&subject="STREAM_SUBJECT"&content=", sizeof(buf_post));
-    strlcat(buf_post, message, sizeof(buf_post));
+    strlcat(buf_post, "&subject=", sizeof(buf_post));
+    strlcat(buf_post, subject, sizeof(buf_post));
+    strlcat(buf_post, "&content=", sizeof(buf_post));
+    strlcat(buf_post, content, sizeof(buf_post));
 
     CURL *curl = curl_easy_init();
     if (!curl) {
@@ -98,10 +97,7 @@ void curl_send(const char *stream, const char *subject, const char *message)
     char *curl_auth = curl_easy_escape(curl, buf_auth, 0);
     char *curl_post = curl_easy_escape(curl, buf_post, 0);
 
-    printf("auth: %s\n", buf_auth);
-    printf("post: %s\n", buf_post);
-
-    curl_easy_setopt(curl, CURLOPT_URL, STREAM_URL);
+    curl_easy_setopt(curl, CURLOPT_URL, POST_URL);
     curl_easy_setopt(curl, CURLOPT_USERPWD, buf_auth);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, buf_post);
 
@@ -127,15 +123,15 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    api_email = getenv(ENV_EMAIL);
-    if (!api_email) {
-        fprintf(stderr, "couldn't get e-mail address from %s\n", ENV_EMAIL);
+    global_api_email = getenv(ENV_VAR_EMAIL);
+    if (!global_api_email) {
+        fprintf(stderr, "couldn't get e-mail from %s\n", ENV_VAR_EMAIL);
         exit(1);
     }
 
-    api_key = getenv(ENV_KEY);
-    if (!api_key) {
-        fprintf(stderr, "couldn't get api key from %s\n", ENV_KEY);
+    global_api_key = getenv(ENV_VAR_KEY);
+    if (!global_api_key) {
+        fprintf(stderr, "couldn't get api key from %s\n", ENV_VAR_KEY);
         exit(1);
     }
 
