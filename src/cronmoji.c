@@ -105,8 +105,8 @@ void req_build_post(char *buf, const size_t size,
 
 void req_send(char *buf_auth, char *buf_post)
 {
-    CURL *curl = curl_easy_init();
-    if (!curl) {
+    CURL *ch = curl_easy_init();
+    if (!ch) {
         curl_global_cleanup();
 
         fprintf(stderr, "couldn't init curl\n");
@@ -114,17 +114,24 @@ void req_send(char *buf_auth, char *buf_post)
     }
 
     // TODO: curl_easy_escape?
+    // TODO: silence response?
 
-    curl_easy_setopt(curl, CURLOPT_URL, API_POST_URL);
-    curl_easy_setopt(curl, CURLOPT_USERPWD, buf_auth);
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, buf_post);
+    curl_easy_setopt(ch, CURLOPT_URL, API_POST_URL);
+    curl_easy_setopt(ch, CURLOPT_USERPWD, buf_auth);
+    curl_easy_setopt(ch, CURLOPT_POSTFIELDS, buf_post);
 
-    CURLcode res = curl_easy_perform(curl);
-    if (res != CURLE_OK) {
-        fprintf(stderr, "curl failed with error %s\n", curl_easy_strerror(res));
+    CURLcode resp = curl_easy_perform(ch);
+    if (resp != CURLE_OK) {
+        fprintf(stderr, "curl failed with error %s\n",
+            curl_easy_strerror(resp));
+
+        curl_easy_cleanup(ch);
+        curl_global_cleanup();
+
+        exit(1);
     }
 
-    curl_easy_cleanup(curl);
+    curl_easy_cleanup(ch);
     curl_global_cleanup();
 }
 
@@ -162,6 +169,7 @@ int main(int argc, char *argv[])
     */
 
     srandom(time(NULL));
+
     int r = random() % ZULIP_TPL_SIZE;
 
     char buf_auth[BUF_SIZE_AUTH];
