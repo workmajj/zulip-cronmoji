@@ -6,9 +6,9 @@
 
 #include <curl/curl.h>
 
-#include "zconst.h"
+#include "const.h"
 
-#define API_POST_URL "https://api.zulip.com/v1/messages"
+#define API_URL "https://api.zulip.com/v1/messages"
 
 #define BUF_SIZE_AUTH 128
 #define BUF_SIZE_POST 512
@@ -16,7 +16,7 @@
 #define ENV_VAR_EMAIL "CRONMOJI_EMAIL"
 #define ENV_VAR_KEY "CRONMOJI_KEY"
 
-#define MINS_PER_TICK 30 // matches clock emoji
+#define MINS_PER_TICK 30 // matches clock emoji resolution
 
 /* time */
 
@@ -116,7 +116,7 @@ void req_send(char *buf_auth, char *buf_post)
     // TODO: curl_easy_escape?
     // TODO: silence response?
 
-    curl_easy_setopt(ch, CURLOPT_URL, API_POST_URL);
+    curl_easy_setopt(ch, CURLOPT_URL, API_URL);
     curl_easy_setopt(ch, CURLOPT_USERPWD, buf_auth);
     curl_easy_setopt(ch, CURLOPT_POSTFIELDS, buf_post);
 

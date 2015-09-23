@@ -3,12 +3,10 @@ NAME = cronmoji
 CC = clang
 CFLAGS = -Wall -g
 
-SRCS = $(wildcard src/*.c)
-
 all: clean cronmoji
 
 cronmoji:
-	$(CC) -lcurl -o $(NAME) $(SRCS)
+	$(CC) -o $(NAME) -lcurl src/$(NAME).c
 
 .PHONY: clean
 clean:
