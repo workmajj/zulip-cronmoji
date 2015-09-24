@@ -13,8 +13,6 @@
 #define BUF_SIZE_TPL 256
 #define BUF_SIZE_POST 512
 
-#define MINS_PER_TICK 30 // matches clock emoji resolution
-
 #include "req.c"
 #include "time.c"
 #include "tpl.c"

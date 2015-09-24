@@ -2,6 +2,7 @@
 #define TPL_NUM_EMOJI 3
 
 // "@**all**" => broadcast to channel
+
 // "$t" => time as string (e.g., "10:30")
 // "$c" => emoji corresponding to current time
 // "$e" => randomly selected emoji from below
@@ -69,7 +70,6 @@ size_t tpl_print_emoji_time(char *buf, const size_t size, const TimePair *tp)
 
     assert(tp->h >= 1 && tp->h <= 12);
     assert(tp->m >= 0 && tp->m <= 59);
-    assert(tp->m % MINS_PER_TICK == 0);
 
     char tmp[12] = {0}; // e.g., ":clock1030:\0"
 
