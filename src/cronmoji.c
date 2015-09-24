@@ -6,7 +6,7 @@
 
 #include <curl/curl.h>
 
-#include "const.h"
+#include "zstring.h"
 
 #define API_URL "https://api.zulip.com/v1/messages"
 
