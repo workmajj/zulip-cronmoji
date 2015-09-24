@@ -1,34 +1,32 @@
 /* tpl */
 
 // "@**all**" => broadcast to channel
-// "[time]" => time as string (e.g., "10:30")
-// "[clock]" => emoji corresponding to current time
-// "[emoji]" => randomly selected emoji from below
+// "$t" => time as string (e.g., "10:30")
+// "$c" => emoji corresponding to current time
+// "$e" => randomly selected emoji from below
 
 const size_t ZULIP_TPL_SIZE = 4;
 const char *ZULIP_TPL[] = {
-    "Hey @**all**, it's [time] [clock] check-in time! [emoji]",
-    "[clock] Yay, @**all**, it's time for [time] check-ins! [emoji]",
-    "@**all** Woo woo, it's time [clock] for [time] check-ins! [emoji]",
-    "[time] [clock] check-ins are now, @**all**! Have fun! [emoji]"
+    "Hey @**all**, it's $t check-in time! $c $e",
+    "$c Yay, @**all**, it's time for $t check-ins! $e",
+    "@**all** Woo woo, it's time $c for $t check-ins! $e",
+    "$t check-ins are now, @**all**! $c Have fun! $e"
 };
 
 /* emoji */
 
-// leading/trailing colons added programmatically (e.g., ":octopus:")
-
 const size_t ZULIP_EMOJI_SIZE = 12;
 const char *ZULIP_EMOJI[] = {
-    "100",
-    "computer",
-    "heart_decoration",
-    "octopus",
-    "recursecenter",
-    "rocket",
-    "rotating_light",
-    "smile",
-    "smiley",
-    "smile_cat",
-    "sparkler",
-    "thumbsup"
+    ":100:",
+    ":computer:",
+    ":heart_decoration:",
+    ":octopus:",
+    ":recursecenter:",
+    ":rocket:",
+    ":rotating_light:",
+    ":smile:",
+    ":smiley:",
+    ":smile_cat:",
+    ":sparkler:",
+    ":thumbsup:"
 };
