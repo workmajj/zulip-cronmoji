@@ -125,36 +125,42 @@ void tpl_build_rand(char *buf, const size_t size)
 
     const char *tpl = ZULIP_TPL[random() % ZULIP_TPL_SIZE]; // FIXME
 
-    for (int buf_idx = 0, i = 0; tpl[i] != 0; i++) {
-        if (tpl[i] == TPL_ESC_CHAR && tpl[i + 1] != 0) {
-            switch (tpl[i + 1]) {
-            case TPL_ESC_CHAR:
-                buf_idx = tpl_print_esc_char(buf, size, buf_idx);
-                break;
-            case 'e':
-                buf_idx = tpl_print_emoji_rand(buf, size, buf_idx);
-                break;
-            case 'c':
-                buf_idx = tpl_print_emoji_time(buf, size, buf_idx, &tp);
-                break;
-            case 't':
-                buf_idx = tpl_print_str_time(buf, size, buf_idx, &tp);
-                break;
-            default:
-                fprintf(stderr, "unknown template token $%c\n", tpl[i + 1]);
-                exit(1);
-            }
+    int idx_buf = 0;
+    int idx_tpl = 0;
 
-            i++; // two chars total (e.g., "$e")
-        }
-        else {
-            if (buf_idx + 1 >= size) {
+    while (tpl[idx_tpl] != 0) {
+        if (tpl[idx_tpl] != TPL_ESC_CHAR || tpl[idx_tpl + 1] == 0) {
+            if (idx_buf + 1 >= size) {
                 fprintf(stderr, "template buffer exceeded\n");
                 exit(1);
             }
 
-            buf[buf_idx] = tpl[i];
-            buf_idx++;
+            buf[idx_buf] = tpl[idx_tpl];
+
+            idx_buf++;
+            idx_tpl++;
+
+            continue;
         }
+
+        switch (tpl[idx_tpl + 1]) {
+        case TPL_ESC_CHAR:
+            idx_buf = tpl_print_esc_char(buf, size, idx_buf);
+            break;
+        case 'e':
+            idx_buf = tpl_print_emoji_rand(buf, size, idx_buf);
+            break;
+        case 'c':
+            idx_buf = tpl_print_emoji_time(buf, size, idx_buf, &tp);
+            break;
+        case 't':
+            idx_buf = tpl_print_str_time(buf, size, idx_buf, &tp);
+            break;
+        default:
+            fprintf(stderr, "unknown template token $%c\n", tpl[idx_tpl + 1]);
+            exit(1);
+        }
+
+        idx_tpl += 2; // two chars total (e.g., "$e")
     }
 }
