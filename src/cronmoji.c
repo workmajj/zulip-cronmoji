@@ -41,37 +41,8 @@ void time_pair_init(TimePair *tp)
     tp->h = (t->tm_hour == 0) ? 12 :
         ((t->tm_hour > 12) ? t->tm_hour - 12 : t->tm_hour);
 
-    // clamped to last tick
-    tp->m = t->tm_min - (t->tm_min % MINS_PER_TICK);
+    tp->m = t->tm_min - (t->tm_min % MINS_PER_TICK); // clamped to last tick
 }
-
-/*
-void time_print_digits(TimePair *tp)
-{
-    assert(tp != NULL);
-
-    assert(tp->h >= 1 && tp->h <= 12);
-    assert(tp->m >= 0 && tp->m <= 59);
-
-    printf("%d:%02d\n", tp->h, tp->m); // i.e., "[H]H:MM"
-}
-
-void time_print_emoji(TimePair *tp)
-{
-    assert(tp != NULL);
-
-    assert(tp->h >= 1 && tp->h <= 12);
-    assert(tp->m >= 0 && tp->m <= 59);
-    assert(tp->m % MINS_PER_TICK == 0);
-
-    if (tp->m == 0) {
-        printf(":clock%d:\n", tp->h); // e.g., ":clock8:"
-    }
-    else {
-        printf(":clock%d%d:\n", tp->h, tp->m); // e.g., ":clock330:"
-    }
-}
-*/
 
 /* tpl */
 
@@ -104,7 +75,7 @@ int tpl_print_emoji_time(char *buf, const size_t size, const int idx,
 
     assert(tp->h >= 1 && tp->h <= 12);
     assert(tp->m >= 0 && tp->m <= 59);
-    assert(tp->m % MINS_PER_TICK == 0); // clamped
+    assert(tp->m % MINS_PER_TICK == 0);
 
     int idx_new = idx;
 
@@ -147,17 +118,13 @@ void tpl_build_rand(char *buf, const size_t size)
 {
     assert(buf != NULL);
 
-    memset(buf, 0, size);
-
-    const char *tpl = ZULIP_TPL[random() % ZULIP_TPL_SIZE];
-    int buf_idx = 0;
-    const char *s;
-
     TimePair tp;
     time_pair_init(&tp);
 
-    for (int i = 0; tpl[i] != 0; i++) {
-        if (tpl[i] == TPL_ESC_CHAR && i + 1 != 0) {
+    const char *tpl = ZULIP_TPL[random() % ZULIP_TPL_SIZE]; // FIXME
+
+    for (int buf_idx = 0, i = 0; tpl[i] != 0; i++) {
+        if (tpl[i] == TPL_ESC_CHAR && tpl[i + 1] != 0) {
             switch (tpl[i + 1]) {
             case 'e':
                 buf_idx = tpl_print_emoji_rand(buf, size, buf_idx);
@@ -169,11 +136,11 @@ void tpl_build_rand(char *buf, const size_t size)
                 buf_idx = tpl_print_str_time(buf, size, buf_idx, &tp);
                 break;
             default:
-                fprintf(stderr, "unknown template token %c\n", tpl[i + 1]);
+                fprintf(stderr, "unknown template token $%c\n", tpl[i + 1]);
                 exit(1);
             }
 
-            i++; // for two chars total (e.g., "$e")
+            i++; // two chars total (e.g., "$e")
         }
         else {
             if (buf_idx + 1 >= size) {
@@ -196,8 +163,6 @@ void req_build_auth(char *buf, const size_t size,
     assert(email != NULL);
     assert(key != NULL);
 
-    memset(buf, 0, size);
-
     strlcpy(buf, email, size);
     strlcat(buf, ":", size);
     strlcat(buf, key, size);
@@ -210,8 +175,6 @@ void req_build_post(char *buf, const size_t size,
     assert(stream != NULL);
     assert(subject != NULL);
     assert(content != NULL);
-
-    memset(buf, 0, size);
 
     strlcpy(buf, "type=stream&to=", size);
     strlcat(buf, stream, size);
@@ -277,34 +240,21 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    srandom(time(NULL));
+    srandom(time(NULL)); // FIXME
 
-    char buf_tpl[BUF_SIZE_TPL];
+    char buf_tpl[BUF_SIZE_TPL] = {0};
+
     tpl_build_rand(buf_tpl, sizeof(buf_tpl));
 
-    printf("%s\n", buf_tpl);
-
-    /*
-    TimePair tp;
-    time_pair_init(&tp);
-    time_print_digits(&tp);
-    time_print_emoji(&tp);
-
-    srandom(time(NULL));
-
-    int r = random() % ZULIP_TPL_SIZE;
-
-    char buf_auth[BUF_SIZE_AUTH];
-    char buf_post[BUF_SIZE_POST];
+    char buf_auth[BUF_SIZE_AUTH] = {0};
+    char buf_post[BUF_SIZE_POST] = {0};
 
     req_build_auth(buf_auth, sizeof(buf_auth), api_email, api_key);
-    req_build_post(buf_post, sizeof(buf_post), argv[1], argv[2], ZULIP_TPL[r]);
+    req_build_post(buf_post, sizeof(buf_post), argv[1], argv[2], buf_tpl);
 
     // req_send(buf_auth, buf_post);
 
-    printf("buf_auth: %s\n", buf_auth);
-    printf("buf_post: %s\n", buf_post);
-    */
+    printf("%s\n", buf_tpl); // FIXME: testing
 
     return 0;
 }
