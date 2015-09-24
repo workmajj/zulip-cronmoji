@@ -120,7 +120,7 @@ void tpl_build_rand(char *buf, const size_t size)
 
     while (tpl[idx_tpl] != 0) {
         if (tpl[idx_tpl] != TPL_ESC_CHAR || tpl[idx_tpl + 1] == 0) {
-            if (idx_buf + 1 >= size) {
+            if (idx_buf + 1 >= size - 1) { // '\0'
                 fprintf(stderr, "template buffer exceeded\n");
                 exit(1);
             }
@@ -151,7 +151,7 @@ void tpl_build_rand(char *buf, const size_t size)
             exit(1);
         }
 
-        if (idx_buf + delta >= size) {
+        if (idx_buf + delta >= size - 1) { // '\0'
             fprintf(stderr, "template buffer exceeded\n");
             exit(1);
         }
