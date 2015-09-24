@@ -2,6 +2,7 @@
 #define TPL_NUM_EMOJI 3
 
 // "@**all**" => broadcast to channel
+
 // "$t" => time as string (e.g., "10:30")
 // "$c" => emoji corresponding to current time
 // "$e" => randomly selected emoji from below
@@ -29,6 +30,20 @@ const char *ZULIP_EMOJI[] = {
     ":sparkler:",
     ":thumbsup:"
 };
+
+int tpl_print_esc_char(char *buf, const size_t size, const int idx)
+{
+    assert(buf != NULL);
+
+    int idx_new = idx;
+
+    char tmp[2] = {TPL_ESC_CHAR, 0};
+
+    strlcat(buf, tmp, size);
+    idx_new += strlen(tmp);
+
+    return idx_new;
+}
 
 int tpl_print_emoji_rand(char *buf, const size_t size, const int idx)
 {
@@ -113,6 +128,9 @@ void tpl_build_rand(char *buf, const size_t size)
     for (int buf_idx = 0, i = 0; tpl[i] != 0; i++) {
         if (tpl[i] == TPL_ESC_CHAR && tpl[i + 1] != 0) {
             switch (tpl[i + 1]) {
+            case TPL_ESC_CHAR:
+                buf_idx = tpl_print_esc_char(buf, size, buf_idx);
+                break;
             case 'e':
                 buf_idx = tpl_print_emoji_rand(buf, size, buf_idx);
                 break;
