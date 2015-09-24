@@ -6,16 +6,16 @@
 
 #include <curl/curl.h>
 
+#include "req.c"
+#include "time.c"
+#include "tpl.c"
+
 #define ENV_VAR_EMAIL "CRONMOJI_EMAIL"
 #define ENV_VAR_KEY "CRONMOJI_KEY"
 
 #define BUF_SIZE_AUTH 128
 #define BUF_SIZE_TPL 256
 #define BUF_SIZE_POST 512
-
-#include "req.c"
-#include "time.c"
-#include "tpl.c"
 
 int main(int argc, char *argv[])
 {
