@@ -106,6 +106,8 @@ void tpl_build_rand(char *buf, const size_t size)
     TimePair tp;
     time_pair_init(&tp);
 
+    srandom(time(NULL)); // FIXME
+
     const char *tpl = ZULIP_TPL[random() % ZULIP_TPL_SIZE]; // FIXME
 
     for (int buf_idx = 0, i = 0; tpl[i] != 0; i++) {

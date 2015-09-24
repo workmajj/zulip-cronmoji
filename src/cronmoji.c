@@ -38,8 +38,6 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    srandom(time(NULL)); // FIXME
-
     char buf_tpl[BUF_SIZE_TPL] = {0};
 
     tpl_build_rand(buf_tpl, sizeof(buf_tpl));
