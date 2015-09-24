@@ -7,12 +7,16 @@
 // "$c" => emoji corresponding to current time
 // "$e" => randomly selected emoji from below
 
-const size_t ZULIP_TPL_SIZE = 4;
+const size_t ZULIP_TPL_SIZE = 8;
 const char *ZULIP_TPL[] = {
-    "Hey @**all**, it's $t check-in time! $c $e",
     "$c Yay, @**all**, it's time for $t check-ins! $e",
+    "$e Get excited, y'@**all**, 'cause it's $t check-in time! $c",
+    "$e It's that time again, @**all**! $t is here! $c",
+    "$t check-ins are now, @**all**! $c Have fun! $e",
+    "@**all** $t check-in time $c has arrived! $e",
     "@**all** Woo woo, it's time $c for $t check-ins! $e",
-    "$t check-ins are now, @**all**! $c Have fun! $e"
+    "Heads up, @**all**, it's time for $t $c check-ins! $e",
+    "Hey @**all**, it's $t check-in time! $c $e"
 };
 
 const size_t ZULIP_EMOJI_SIZE = 12;
