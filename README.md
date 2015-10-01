@@ -1,7 +1,7 @@
 zulip-cronmoji
 ==============
 
-Emojified RC check-in reminders broadcast on Zulip :city_sunrise: :computer: :octopus: :clock1030: :rotating_light:
+Emojified RC check-in reminders broadcast on [Zulip](https://zulip.org/) :city_sunrise: :computer: :octopus: :clock1030: :rotating_light:
 
 Contact
 -------
@@ -13,9 +13,17 @@ I worked on this software during my time as a [Recurse Center](https://www.recur
 Description
 -----------
 
-I use this program at RC to announce our regularly scheduled check-ins automatically. Because sending a message via Zulip is as easy as making a `POST` request, I tried complicating things by working in C, and by implementing a simple templating language for the messages.
+I use this program at RC to announce our regularly scheduled check-ins automatically. Because [sending a message via Zulip](https://zulip.com/api/) is as easy as making a `POST` request, I tried complicating things by working in C, and by implementing a simple template language for the messages.
 
 When `cronmoji` runs, it gets the current time, rounds to the nearest half-hour, and then uses this info to evaluate a random message template. Templates can specify adding the time as a string (`$t`), adding a clock emoji (`$c`), or adding three randomly selected fun/goofy emoji (`$e`). The final message string is published to the Zulip stream and topic specified as command-line args.
+
+Features I won't be adding, because this is a silly project:
+
+* loading template string and emoji arrays from external files
+* pinging specific people rather than the whole group
+* making the program into an interactive bot that runs in the background
+
+This project will eventually be obsoleted by internal RC tools.
 
 Build & Usage
 -------------
