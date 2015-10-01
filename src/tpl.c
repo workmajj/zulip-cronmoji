@@ -50,21 +50,21 @@ size_t tpl_print_emoji_rand(char *buf, const size_t size)
 {
     assert(buf != NULL);
 
-    int delta = 0;
+    int size_delta = 0;
 
     for (int i = 0; i < TPL_NUM_EMOJI; i++) {
-        const char *e = ZULIP_EMOJI[random() % ZULIP_EMOJI_SIZE]; // FIXME
+        const char *e = ZULIP_EMOJI[random() % ZULIP_EMOJI_SIZE];
 
         strlcat(buf, e, size);
-        delta += strlen(e);
+        size_delta += strlen(e);
 
         if (i < TPL_NUM_EMOJI - 1) {
             strlcat(buf, " ", size);
-            delta++;
+            size_delta++;
         }
     }
 
-    return delta;
+    return size_delta;
 }
 
 size_t tpl_print_emoji_time(char *buf, const size_t size, const TimePair *tp)
@@ -113,14 +113,14 @@ void tpl_build_rand(char *buf, const size_t size)
     TimePair tp;
     time_pair_init(&tp);
 
-    srandom(time(NULL)); // FIXME
+    srandom(time(NULL));
 
-    const char *tpl = ZULIP_TPL[random() % ZULIP_TPL_SIZE]; // FIXME
+    const char *tpl = ZULIP_TPL[random() % ZULIP_TPL_SIZE];
 
     size_t idx_buf = 0;
     size_t idx_tpl = 0;
 
-    size_t delta;
+    size_t size_delta;
 
     while (tpl[idx_tpl] != 0) {
         if (tpl[idx_tpl] != TPL_ESC_CHAR || tpl[idx_tpl + 1] == 0) {
@@ -139,28 +139,28 @@ void tpl_build_rand(char *buf, const size_t size)
 
         switch (tpl[idx_tpl + 1]) {
         case TPL_ESC_CHAR:
-            delta = tpl_print_esc_char(buf, size);
+            size_delta = tpl_print_esc_char(buf, size);
             break;
         case 'e':
-            delta = tpl_print_emoji_rand(buf, size);
+            size_delta = tpl_print_emoji_rand(buf, size);
             break;
         case 'c':
-            delta = tpl_print_emoji_time(buf, size, &tp);
+            size_delta = tpl_print_emoji_time(buf, size, &tp);
             break;
         case 't':
-            delta = tpl_print_str_time(buf, size, &tp);
+            size_delta = tpl_print_str_time(buf, size, &tp);
             break;
         default:
             fprintf(stderr, "unknown template token %c\n", tpl[idx_tpl + 1]);
             exit(1);
         }
 
-        if (idx_buf + delta >= size - 1) { // '\0'
+        if (idx_buf + size_delta >= size - 1) { // '\0'
             fprintf(stderr, "template buffer exceeded\n");
             exit(1);
         }
 
-        idx_buf += delta;
+        idx_buf += size_delta;
         idx_tpl += 2;
     }
 }

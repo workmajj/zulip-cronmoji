@@ -46,9 +46,9 @@ int main(int argc, char *argv[])
     req_build_auth(buf_auth, sizeof(buf_auth), api_email, api_key);
     req_build_post(buf_post, sizeof(buf_post), argv[1], argv[2], buf_tpl);
 
-    // req_send(buf_auth, buf_post);
+    req_send(buf_auth, buf_post);
 
-    printf("%s\n", buf_tpl); // FIXME: testing
+    printf("%s\n", buf_tpl);
 
     return 0;
 }
