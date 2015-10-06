@@ -89,7 +89,7 @@ size_t tpl_print_emoji_time(char *buf, const size_t size, const TimePair *tp)
     return strlen(tmp);
 }
 
-int tpl_print_str_time(char *buf, const size_t size, const TimePair *tp)
+size_t tpl_print_str_time(char *buf, const size_t size, const TimePair *tp)
 {
     assert(buf != NULL);
     assert(tp != NULL);
