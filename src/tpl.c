@@ -53,7 +53,7 @@ size_t tpl_print_emoji_rand(char *buf, const size_t size)
     int size_delta = 0;
 
     for (int i = 0; i < TPL_NUM_EMOJI; i++) {
-        const char *e = ZULIP_EMOJI[random() % ZULIP_EMOJI_SIZE];
+        const char *e = ZULIP_EMOJI[random() % ZULIP_EMOJI_SIZE]; // FIXME
 
         strlcat(buf, e, size);
         size_delta += strlen(e);
@@ -113,9 +113,9 @@ void tpl_build_rand(char *buf, const size_t size)
     TimePair tp;
     time_pair_init(&tp);
 
-    srandom(time(NULL));
+    srandom(time(NULL)); // FIXME
 
-    const char *tpl = ZULIP_TPL[random() % ZULIP_TPL_SIZE];
+    const char *tpl = ZULIP_TPL[random() % ZULIP_TPL_SIZE]; // FIXME
 
     size_t idx_buf = 0;
     size_t idx_tpl = 0;
