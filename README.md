@@ -42,20 +42,15 @@ Build & Usage
             "Hey @**all**, it's $t check-in time! $c $e"
         };
 
-        const size_t ZULIP_EMOJI_SIZE = 12;
+        const size_t ZULIP_EMOJI_SIZE = 48;
         const char *ZULIP_EMOJI[] = {
             ":100:",
-            ":computer:",
-            ":heart_decoration:",
-            ":octopus:",
-            ":recursecenter:",
-            ":rocket:",
-            ":rotating_light:",
-            ":smile:",
-            ":smiley:",
-            ":smile_cat:",
-            ":sparkler:",
-            ":thumbsup:"
+            ":art:",
+            ":clap:",
+            ...
+            ":volcano:",
+            ":watch:",
+            ":zap:"
         };
 
 2. Next, build the program from source:
