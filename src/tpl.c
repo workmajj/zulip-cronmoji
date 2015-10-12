@@ -1,6 +1,8 @@
 #define TPL_ESC_CHAR '$'
 #define TPL_NUM_EMOJI 3
 
+// "@**all**" => broadcast to channel
+
 // "$t" => time as string (e.g., "10:30")
 // "$c" => emoji corresponding to current time
 // "$e" => randomly selected emoji from below
