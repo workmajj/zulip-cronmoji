@@ -30,16 +30,15 @@ Build & Usage
 
 1. After cloning the project, open `src/tpl.c` and customize the array of message templates and/or the array of fun emoji (of which `TPL_NUM_EMOJI` are randomly chosen):
 
-        const size_t ZULIP_TPL_SIZE = 8;
+        const size_t ZULIP_TPL_SIZE = 12;
         const char *ZULIP_TPL[] = {
             "$c Yay, @**all**, it's time for $t check-ins! $e",
+            "$e @**all** Yo, it's time $c for $t check-ins!",
             "$e Get excited, y'@**all**, 'cause it's $t check-in time! $c",
-            "$e It's that time again, @**all**! $t is here! $c",
-            "$t check-ins are now, @**all**! $c Have fun! $e",
-            "@**all** $t check-in time $c has arrived! $e",
-            "@**all** Woo woo, it's time $c for $t check-ins! $e",
+            ...
             "Heads up, @**all**, it's time for $t $c check-ins! $e",
-            "Hey @**all**, it's $t check-in time! $c $e"
+            "Hey @**all**, it's $t check-in time! $c $e",
+            "ZOMG @**all**, it's $t check-in time! $c $e"
         };
 
         const size_t ZULIP_EMOJI_SIZE = 48;
