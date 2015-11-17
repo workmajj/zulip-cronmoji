@@ -1,14 +1,15 @@
 NAME = cronmoji
 
-CC = clang
 CFLAGS = -Wall -g
+LDFLAGS = -lcurl
 
-all: clean cronmoji
+OBJS = src/cronmoji.o
 
-cronmoji:
-	$(CC) -o $(NAME) -lcurl src/$(NAME).c
+cronmoji: $(OBJS)
+	$(CC) $(LDFLAGS) -o cronmoji $(OBJS)
 
 .PHONY: clean
 clean:
 	rm -f $(NAME)
 	rm -rf $(NAME).dSYM
+	rm -f $(OBJS)
