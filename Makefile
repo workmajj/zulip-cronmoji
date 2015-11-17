@@ -1,6 +1,6 @@
 NAME = cronmoji
 
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g -std=c99
 LDFLAGS = -lcurl
 
 OBJS = src/cronmoji.o
