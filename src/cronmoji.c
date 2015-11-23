@@ -1,14 +1,8 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <time.h>
 
-#include <curl/curl.h>
-
-#include "req.c"
-#include "time.c"
-#include "tpl.c"
+#include "cronmoji.h"
 
 #define ENV_VAR_EMAIL "CRONMOJI_EMAIL"
 #define ENV_VAR_KEY "CRONMOJI_KEY"

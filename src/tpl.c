@@ -1,3 +1,11 @@
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#include "cronmoji.h"
+
 #define TPL_ESC_CHAR '$'
 #define TPL_NUM_EMOJI 3
 

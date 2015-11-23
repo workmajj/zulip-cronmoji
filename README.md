@@ -54,7 +54,7 @@ Build & Usage
 
 2. Next, build the program from source:
 
-        $ make all
+        $ make
 
 3. Then set up your environment to export the appropriate Zulip API credentials. These can be sourced from your `.bashrc` if you'll be running `cronmoji` repeatedly:
 

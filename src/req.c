@@ -1,3 +1,9 @@
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <curl/curl.h>
+
 #define REQ_POST_URL "https://api.zulip.com/v1/messages"
 
 void req_build_auth(char *buf, const size_t size,

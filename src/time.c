@@ -1,9 +1,9 @@
-#define TIME_TICK_MINS 30 // matches clock emoji resolution
+#include <assert.h>
+#include <time.h>
 
-typedef struct time_pair {
-    int h;
-    int m;
-} TimePair;
+#include "cronmoji.h"
+
+#define TIME_TICK_MINS 30 // matches clock emoji resolution
 
 void time_pair_init(TimePair *tp)
 {
